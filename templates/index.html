@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Data Layer: Drag and Drop GeoJSON</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <link
+      href="https://unpkg.com/material-components-web@6.0.0/dist/material-components-web.css"
+      rel="stylesheet"
+    />
+    <link
+      href="{{url_for('static', filename='style.css')}}"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+
+    <!-- jsFiddle will insert css and js -->
+  </head>
+  <body>
+    <div id="container">
+      <div id="map"></div>
+    </div>
+
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key={{maps_api_key}}&callback=initialize&libraries=&v=weekly&channel=2"
+      async
+    ></script>
+    <script src="{{url_for('static', filename='app.js')}}"></script>
+  </body>
+</html>
