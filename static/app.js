@@ -44,7 +44,7 @@ function processPoints(geometry, callback, thisArg) {
 }
 
 function updateMap() {
-    fetch("./static/path.json")
+    fetch("/points")
       .then(response => response.text())
       .then(loadGeoJsonString);
 }

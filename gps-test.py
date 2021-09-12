@@ -1,24 +1,16 @@
 import io
-
 import pynmea2
 import serial
-from time import sleep
+import sqlite3
 
+db = sqlite3.connect('points.db')
+db_cursor = db.cursor()
 ser = serial.Serial('/dev/ttyS0', 9600, timeout=5.0)
 sio = io.TextIOWrapper(io.BufferedRWPair(ser, ser))
 
-def isclose(a, b):
-    return abs(a-b) < 0.00001
-
-class GpsPath:
-    def __init__(self):
-        self.points = []
-
-    def add_point(self, lat, lon):
-        last_lat, last_lon = (0, 0) if len(self.points) == 0 else self.points[-1]
-        if isclose(lat, last_lat) and isclose(lon, last_lon):
-            return
-        self.points.append((lat, lon))
+def execute_write_query(filename, variables = {}):
+    db_cursor.execute(open("sql/" + filename, "r").read(), variables)
+    db.commit()
 
 def nmea_to_decimal(nmea_str, direction):
     start_minutes = nmea_str.index('.') - 2
@@ -27,18 +19,20 @@ def nmea_to_decimal(nmea_str, direction):
     multipler = -1 if direction in ['W', 'S'] else 1
     return (degrees + (minutes / 60.0)) * multipler
 
-path = GpsPath()
+execute_write_query("create_db.sql")
 while 1:
     try:
         line = sio.readline()
         msg = pynmea2.parse(line)
         if type(msg) is pynmea2.GGA:
-            path.add_point(nmea_to_decimal(msg.lat, msg.lat_dir), nmea_to_decimal(msg.lon, msg.lon_dir))
-        print path.points
+            execute_write_query("add_point.sql", {
+                "path_id": 0,
+                "longitude": nmea_to_decimal(msg.lon, msg.lon_dir),
+                "latitude": nmea_to_decimal(msg.lat, msg.lat_dir),
+            })
     except serial.SerialException as e:
         print('Device error: {}'.format(e))
         break
     except pynmea2.ParseError as e:
         print('Parse error: {}'.format(e))
         continue
-
