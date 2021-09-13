@@ -1,13 +1,19 @@
 let map;
 
+/**
+ * Setup the global map object which will hold the coordinates.
+ */
 function initMap() {
-  // set up the map
   map = new google.maps.Map(document.getElementById("map"), {
     center: new google.maps.LatLng(0, 0),
     zoom: 4,
   });
 }
 
+/**
+ * Load a geo json object into the map and re-calibrate the zoom to fit the
+ * points.
+ */
 function loadGeoJsonString(geoString) {
   const geojson = JSON.parse(geoString);
   map.data.addGeoJson(geojson);
@@ -43,6 +49,9 @@ function processPoints(geometry, callback, thisArg) {
   }
 }
 
+/*
+ * Pull the latest points from the server and re-draw the map.
+ */
 function updateMap() {
     fetch("/points")
       .then(response => response.text())
