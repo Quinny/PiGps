@@ -61,5 +61,4 @@ function updateMap() {
 function initialize() {
   initMap();
   updateMap();
-  setInterval(updateMap, 3000);
 }
