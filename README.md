@@ -3,6 +3,8 @@
 This repo hosts code which powers a self hosted GPS route recorder (something
 like Strava).
 
+![](pictures/unit.jpg)
+
 ## Hardware
 
 Theoretically you should be able to run this on any kind of micro-computer
