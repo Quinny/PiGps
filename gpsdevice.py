@@ -22,7 +22,7 @@ class GpsDevice:
 
     def poll_location(self):
         while True:
-            line = self.sio.readline()
+            line = self.serial_io.readline()
             msg = pynmea2.parse(line)
             if type(msg) is pynmea2.GGA:
                 return {
