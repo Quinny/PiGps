@@ -20,12 +20,25 @@ class GpsDevice:
         ser = serial.Serial('/dev/ttyS0', 9600, timeout=5.0)
         self.serial_io = io.TextIOWrapper(io.BufferedRWPair(ser, ser))
 
-    def poll_location():
+    def poll_location(self):
         while True:
-            line = sio.readline()
+            line = self.sio.readline()
             msg = pynmea2.parse(line)
             if type(msg) is pynmea2.GGA:
                 return {
                     "longitude": nmea_to_decimal(msg.lon, msg.lon_dir),
                     "latitude": nmea_to_decimal(msg.lat, msg.lat_dir)
                 }
+
+class MockGpsDevice:
+    def __init__(self):
+        self.current_longitude = 48.8584
+        self.current_latitude = 2.2945
+
+    def poll_location(self):
+        self.current_longitude += 0.0001
+        self.current_latitude += 0.0001
+        return {
+            "longitude": self.current_longitude,
+            "latitude": self.current_latitude
+        }

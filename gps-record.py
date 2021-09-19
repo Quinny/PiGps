@@ -2,9 +2,14 @@ import io
 import pynmea2
 import serial
 import sqlite3
-from . import gpsdevice
+import gpsdevice
+import sys
 
-gps = gpsdevice.GpsDevice()
+if len(sys.argv) > 1 and sys.argv[1] == "mock":
+    gps = gpsdevice.MockGpsDevice()
+else:
+    gps = gpsdevice.GpsDevice()
+
 db = sqlite3.connect('points.db')
 db_cursor = db.cursor()
 
@@ -19,12 +24,8 @@ execute_write_query("create_db.sql")
 while 1:
     try:
         location = gps.poll_location()
-        execute_write_query("add_point.sql", {
-            "path_id": 0,
-        } + location)
-    except serial.SerialException as e:
-        print('Device error: {}'.format(e))
+        location.update({"path_id": 0})
+        execute_write_query("add_point.sql", location)
+    except Exception as e:
+        print('Exception: {} {}'.format(type(e), e))
         break
-    except pynmea2.ParseError as e:
-        print('Parse error: {}'.format(e))
-        continue
