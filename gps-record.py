@@ -28,4 +28,3 @@ while 1:
         execute_write_query("add_point.sql", location)
     except Exception as e:
         print('Exception: {} {}'.format(type(e), e))
-        break
