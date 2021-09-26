@@ -1,6 +1,7 @@
 import io
 import pynmea2
 import serial
+from collections import namedtuple
 
 # The format for NMEA coordinates is (d)ddmm.mmmm
 # where d=degrees and m=minutes (http://aprs.gids.nl/nmea/#latlong)
@@ -15,10 +16,7 @@ def nmea_to_decimal(nmea_str, direction):
     multipler = -1 if direction in ['W', 'S'] else 1
     return (degrees + (minutes / 60.0)) * multipler
 
-class Coordinate:
-    def __init__(self, longitude, latitude):
-        self.longitude = longitude
-        self.latitude = latitude
+Coordinate = namedtuple('Coordinate', ['longitude', 'latitude'])
 
 class GpsDevice:
     def __init__(self):

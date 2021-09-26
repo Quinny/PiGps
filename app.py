@@ -1,7 +1,8 @@
-from . import keys
 from flask import Flask, render_template, g, jsonify
 import sqlite3
 from . import pathstore
+from . import keys
+from . import stats
 
 app = Flask(__name__)
 
@@ -25,7 +26,11 @@ def index():
 @app.route("/points/<path_id>")
 def points(path_id=None):
     path_id = path_id or get_store().get_latest_path_id()
-    points = get_store().get_path(path_id)
+    path = get_store().get_path(path_id)
+    points = [
+            [coordinate.longitude, coordinate.latitude]
+            for coordinate in path
+    ]
     geo_json = {
         "type": "FeatureCollection",
         "features": [{

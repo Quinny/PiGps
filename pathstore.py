@@ -3,6 +3,9 @@ import pynmea2
 import serial
 import sqlite3
 import sys
+from collections import namedtuple
+
+Coordinate = namedtuple('Coordinate', ['longitude', 'latitude'])
 
 class PathStore:
     def __init__(self):
@@ -37,7 +40,7 @@ class PathStore:
         )["id"] or 0
 
     def get_path(self, path_id):
-        row_set = self._execute_read_query("""
+        row_set = self._execute_read_query(("""
                 SELECT
                     longitude, latitude
                 FROM
@@ -49,7 +52,10 @@ class PathStore:
                 ASC
             """), {"path_id": path_id})
         return [
-            [row["longitude"], row["latitude"]]
+            Coordinate(
+                longitude=row["longitude"],
+                latitude=row["latitude"]
+            )
             for row in row_set
         ]
 
