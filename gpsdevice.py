@@ -15,6 +15,11 @@ def nmea_to_decimal(nmea_str, direction):
     multipler = -1 if direction in ['W', 'S'] else 1
     return (degrees + (minutes / 60.0)) * multipler
 
+class Coordinate:
+    def __init__(self, longitude, latitude):
+        self.longitude = longitude
+        self.latitude = latitude
+
 class GpsDevice:
     def __init__(self):
         ser = serial.Serial('/dev/ttyS0', 9600, timeout=5.0)
@@ -25,20 +30,20 @@ class GpsDevice:
             line = self.serial_io.readline()
             msg = pynmea2.parse(line)
             if type(msg) is pynmea2.GGA:
-                return {
-                    "longitude": nmea_to_decimal(msg.lon, msg.lon_dir),
-                    "latitude": nmea_to_decimal(msg.lat, msg.lat_dir)
-                }
+                return Coordinate(
+                        longitude=nmea_to_decimal(msg.lon, msg.lon_dir),
+                        latitude=nmea_to_decimal(msg.lat, msg.lat_dir)
+                )
 
 class MockGpsDevice:
     def __init__(self):
-        self.current_longitude = 48.8584
-        self.current_latitude = 2.2945
+        self.current_latitude = 48.8584
+        self.current_longitude = 2.2945
 
     def poll_location(self):
         self.current_longitude += 0.0001
         self.current_latitude += 0.0001
-        return {
-            "longitude": self.current_longitude,
-            "latitude": self.current_latitude
-        }
+        return Coordinate(
+            longitude=self.current_longitude,
+            latitude=self.current_latitude
+        )

@@ -4,27 +4,18 @@ import serial
 import sqlite3
 import gpsdevice
 import sys
+import pathstore
 
 if len(sys.argv) > 1 and sys.argv[1] == "mock":
     gps = gpsdevice.MockGpsDevice()
 else:
     gps = gpsdevice.GpsDevice()
 
-db = sqlite3.connect('points.db')
-db_cursor = db.cursor()
-
-# Runs a modifying SQL query locaated at `sql/{filename}` and commits the
-# result.
-def execute_write_query(filename, variables = {}):
-    db_cursor.execute(open("sql/" + filename, "r").read(), variables)
-    db.commit()
-
-execute_write_query("create_db.sql")
-
+store = pathstore.PathStore()
+path_id = store.get_latest_path_id() + 1
 while 1:
     try:
         location = gps.poll_location()
-        location.update({"path_id": 0})
-        execute_write_query("add_point.sql", location)
+        store.add_point(path_id, location)
     except Exception as e:
         print('Exception: {} {}'.format(type(e), e))
