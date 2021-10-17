@@ -1,4 +1,5 @@
 import math
+from datetime import timedelta
 
 def degrees_to_radians(degree):
   return degree * (math.pi/180)
@@ -20,6 +21,11 @@ def get_distance_in_km(lon1, lat1, lon2, lat2):
 class PathStats:
     def __init__(self, path):
         self.total_distance_km = self._get_total_distance_km(path)
+        self.elapsed_time_hours = self._elapsed_time_hours(path)
+
+    def _elapsed_time_hours(self, path):
+        elapsed = path[-1].time_recorded - path[0].time_recorded
+        return elapsed / timedelta(hours=1)
 
     def _get_total_distance_km(self, path):
         distance = 0
@@ -36,4 +42,10 @@ class PathStats:
         return [{
             "name": "Total Distance (Kilometers)",
             "value": round(self.total_distance_km, 2),
+        }, {
+            "name": "Elapsed Time (hours)",
+            "value": round(self.elapsed_time_hours, 2),
+        }, {
+            "name": "Average Speed (KM/h)",
+            value: round(self.total_distance_km / self.elapsed_time_hours),
         }]

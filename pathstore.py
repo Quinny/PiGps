@@ -3,13 +3,17 @@ import pynmea2
 import serial
 import sqlite3
 import sys
+from datetime import datetime
 from collections import namedtuple
 
-Coordinate = namedtuple('Coordinate', ['longitude', 'latitude'])
+Coordinate = namedtuple('Coordinate', ['longitude', 'latitude', 'time_recorded'])
 
 class PathStore:
     def __init__(self):
-        self.db = sqlite3.connect('points.db')
+        self.db = sqlite3.connect(
+                'points.db',
+                detect_types=sqlite3.PARSE_DECLTYPES
+        )
         self.db.row_factory = sqlite3.Row
         self.db_cursor = self.db.cursor()
         self._execute_write_query("create_db.sql")
@@ -42,7 +46,7 @@ class PathStore:
     def get_path(self, path_id):
         row_set = self._execute_read_query(("""
                 SELECT
-                    longitude, latitude
+                    longitude, latitude, time_recorded
                 FROM
                     points
                 WHERE
@@ -54,7 +58,11 @@ class PathStore:
         return [
             Coordinate(
                 longitude=row["longitude"],
-                latitude=row["latitude"]
+                latitude=row["latitude"],
+                time_recorded=datetime.strptime(
+                        row["time_recorded"],
+                        '%Y-%m-%d %H:%M:%S'
+                )
             )
             for row in row_set
         ]
