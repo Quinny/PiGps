@@ -47,5 +47,5 @@ class PathStats:
             "value": round(self.elapsed_time_hours, 2),
         }, {
             "name": "Average Speed (KM/h)",
-            value: round(self.total_distance_km / self.elapsed_time_hours),
+            "value": round(self.total_distance_km / self.elapsed_time_hours),
         }]
