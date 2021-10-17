@@ -42,4 +42,9 @@ def points(path_id=None):
             "properties": {},
         }]
     }
-    return jsonify(geo_json)
+    stats_json = stats.PathStats(path).json()
+    response = {
+        "geo_json": geo_json,
+        "stats": stats_json,
+    }
+    return jsonify(response)

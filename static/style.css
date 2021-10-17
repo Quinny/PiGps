@@ -67,7 +67,7 @@ body {
   flex-basis: 15rem;
   flex-grow: 1;
   padding: 1rem;
-  max-width: 30rem;
+  max-width: 15rem;
   height: 100%;
   box-sizing: border-box;
   overflow: auto;

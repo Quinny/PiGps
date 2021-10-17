@@ -31,3 +31,9 @@ class PathStats:
             )
             last_point = point
         return distance
+
+    def json(self):
+        return [{
+            "name": "Total Distance (Kilometers)",
+            "value": round(self.total_distance_km, 2),
+        }]

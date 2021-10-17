@@ -50,12 +50,34 @@ function processPoints(geometry, callback, thisArg) {
 }
 
 /*
+ * Populate ths sidebar with stats about the path
+ */
+function loadStats(stats) {
+  var sidebar = document.getElementById("sidebar");
+  for (const stat of stats) {
+    var statNode = document.createElement("div");
+    statNode.classList.add("file");
+
+    var display = document.createElement("div");
+    display.classList.add("filename");
+    display.innerHTML = stat.name + ": " + stat.value;
+
+    statNode.appendChild(display);
+    sidebar.appendChild(statNode);
+    sidebar.appendChild(document.createElement("hr"));
+  }
+}
+
+/*
  * Pull the latest points from the server and re-draw the map.
  */
 function updateMap() {
     fetch("/points")
-      .then(response => response.text())
-      .then(loadGeoJsonString);
+      .then(response => response.json())
+      .then(response => {
+        loadGeoJsonString(JSON.stringify(response.geo_json));
+        loadStats(response.stats);
+      });
 }
 
 function initialize() {
