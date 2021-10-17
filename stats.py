@@ -25,7 +25,7 @@ class PathStats:
 
     def _elapsed_time_hours(self, path):
         elapsed = path[-1].time_recorded - path[0].time_recorded
-        return elapsed / timedelta(hours=1)
+        return elapsed.total_seconds() / 3600
 
     def _get_total_distance_km(self, path):
         distance = 0
