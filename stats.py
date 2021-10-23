@@ -21,11 +21,21 @@ def get_distance_in_km(lon1, lat1, lon2, lat2):
 class PathStats:
     def __init__(self, path):
         self.total_distance_km = self._get_total_distance_km(path)
-        self.elapsed_time_hours = self._elapsed_time_hours(path)
+        self.elapsed_time_seconds = self._elapsed_time_seconds(path)
 
-    def _elapsed_time_hours(self, path):
+    def _elapsed_time_seconds(self, path):
         elapsed = path[-1].time_recorded - path[0].time_recorded
-        return elapsed.total_seconds() / 3600
+        return elapsed.total_seconds()
+
+    def _format_time(self):
+        hours = self.elapsed_time_seconds // 3600
+        minutes = (self.elapsed_time_seconds - (hours * 3600)) // 60
+        seconds = self.elapsed_time_seconds - (hours * 3600) - (minutes * 60)
+        return "{:02d}:{:02d}:{:02d}".format(
+                int(hours),
+                int(minutes),
+                int(seconds)
+        )
 
     def _get_total_distance_km(self, path):
         distance = 0
@@ -43,9 +53,11 @@ class PathStats:
             "name": "Total Distance (Kilometers)",
             "value": round(self.total_distance_km, 2),
         }, {
-            "name": "Elapsed Time (hours)",
-            "value": round(self.elapsed_time_hours, 2),
+            "name": "Elapsed Time",
+            "value": self._format_time(),
         }, {
             "name": "Average Speed (KM/h)",
-            "value": round(self.total_distance_km / self.elapsed_time_hours),
+            "value": round(
+                self.total_distance_km / (self.elapsed_time_seconds / 3600),
+            2),
         }]

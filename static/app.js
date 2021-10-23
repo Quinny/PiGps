@@ -14,8 +14,7 @@ function initMap() {
  * Load a geo json object into the map and re-calibrate the zoom to fit the
  * points.
  */
-function loadGeoJsonString(geoString) {
-  const geojson = JSON.parse(geoString);
+function loadGeoJsonString(geojson) {
   map.data.addGeoJson(geojson);
   zoom(map);
 }
@@ -75,7 +74,7 @@ function updateMap() {
     fetch("/points")
       .then(response => response.json())
       .then(response => {
-        loadGeoJsonString(JSON.stringify(response.geo_json));
+        loadGeoJsonString(response.geo_json);
         loadStats(response.stats);
       });
 }
