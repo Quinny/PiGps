@@ -71,12 +71,19 @@ function loadStats(stats) {
  * Pull the latest points from the server and re-draw the map.
  */
 function updateMap() {
-    fetch("/points")
-      .then(response => response.json())
-      .then(response => {
-        loadGeoJsonString(response.geo_json);
-        loadStats(response.stats);
-      });
+  const urlParams = new URLSearchParams(window.location.search);
+  const pathId = urlParams.get('path')
+  let endpoint = "/points";
+  if (pathId) {
+    endpoint += "/" + pathId;
+  }
+
+  fetch(endpoint)
+    .then(response => response.json())
+    .then(response => {
+      loadGeoJsonString(response.geo_json);
+      loadStats(response.stats);
+    });
 }
 
 function initialize() {
